@@ -1,7 +1,7 @@
 var express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const Users = require('../models').User;
+const Users = require('.').User;
 
 const paramsID = (req, res, next, id) => {
     Users.findById(id, (err, doc) => {
@@ -25,16 +25,11 @@ const getUsers = (req, res, next) => {
 
 const getUserById = ({ user }, res) => {
     let _id = user._id
-    let product = user.product
     let fullName = user.fullName
-    let phoneNumber = user.phoneNumber
-    let role = user.role
-    let supplier = user.supplier
-    let location = user.location
-    let rating = user.rating
+    let email = user.email
     let createdAt = user.createdAt
-    let userData = { _id, product, fullName, phoneNumber, role, supplier, location, rating, createdAt }
-    res.status(201).json({ 'status': 'success', 'data': userData });
+    let userData = { _id, fullName, email, createdAt }
+    res.status(200).json({ 'status': 'success', 'data': userData });
 }
 
 const createUser = async (req, res, next) => {
@@ -61,24 +56,23 @@ const signUp = (req, res, next) => {
 }
 
 const logIn = (req, res, next) => {
-    let phoneNumber = req.body.phoneNumber;
+    let email = req.body.email;
     let password = req.body.password;
-    Users.find({ phoneNumber }, null, (err, user) => {
+    Users.find({ email }, null, (err, user) => {
         if (err) return next(err)
         if (user[0]) {
             bcrypt.compare(password, user[0].password, function (err, result) {
                 if (err) {
-                    return res.status(401).json({ 'status': 'error', 'message': 'Phone Number / Password is incorrect' });
+                    return res.status(401).json({ 'status': 'error', 'message': 'Email / Password is incorrect' });
                 }
                 if (result) {
                     // if (user[0].role === 'admin') {
                     const token = jwt.sign({
                         id: user[0]._id,
                         fullName: user[0].fullName,
-                        phoneNumber: user[0].phoneNumber,
-                        role: user[0].role
-                    }, process.env.JWT_ADMIN_KEY);
-                    return res.status(201).json({ 'status': 'success', 'data': token });
+                        email: user[0].email
+                    }, process.env.JWT_KEY);
+                    return res.status(200).json({ 'status': 'success', 'data': token });
                     // }
                 } else {
                     return res.status(401).json({ 'status': 'error', 'message': 'Phone Number / Password is incorrect' });

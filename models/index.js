@@ -14,39 +14,23 @@ db.once('open', () => {
 })
 let UsersSchema = new Schema({
     fullName: String,
-    phoneNumber: { type: String, unique: true },
+    email: { type: String, unique: true },
     password: String,
-    role: String,
-    supplier: Boolean,
-    product: Array,
-    location: String,
-    rating: Number,
     createdAt: Date
 });
-let TenderSchema = new Schema({
-    description: String,
-    product: String,
-    quantity: Number,
-    altQuantity: String,
-    price: Number,
-    createdAt: Date,
-    expiresAt: Date,
-    userID: String
-})
-let BidsSchema = new Schema({
-    price: Number,
-    quantity: Number,
-    tenderID: String,
-    userID: String,
+let RecordsSchema = new Schema({
+    userEmail: String,
+    month: String,
+    year: Number,
+    type: String,
+    amount: Number,
     createdAt: Date
 })
 let User = mongoose.model('User', UsersSchema);
-let Tender = mongoose.model('Tender', TenderSchema);
-let Bid = mongoose.model('Bids', BidsSchema);
+let Record = mongoose.model('Tender', RecordsSchema);
 
 module.exports = {
     db,
     User,
-    Tender,
-    Bid
+    Record
 };

@@ -42,6 +42,7 @@ const getUserRecordByMonth = (req, res) => {
         res.status(204).json({ 'status': 'success', 'data': filteredRecords })
     }
 }
+
 const getRecords = (req, res, next) => {
     Records.find({}, null, (err, records) => {
         if (err) return next(err)

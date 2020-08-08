@@ -7,7 +7,7 @@ const cors = require('cors');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-const recordsRouter = require('./routes/reords');
+const recordsRouter = require('./routes/records');
 
 var app = express();
 

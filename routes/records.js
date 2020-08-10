@@ -14,5 +14,7 @@ router.get('/:email', recordModel.getUserRecords)
 router.get('/:email/type/:recordType', recordModel.getUserRecordByType)
 //route to retrieve users records by month
 router.get('/:email/month/:month', recordModel.getUserRecordByMonth)
+//route to delete a recordMode
+router.delete('/:id', recordModel.deleteRecord)
 
 module.exports = router;

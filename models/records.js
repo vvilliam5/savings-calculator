@@ -63,10 +63,19 @@ const createRecord = (req, res, next) => {
 }
 
 const deleteRecord = (req, res, next) => {
-    req.record.remove((err) => {
+    Records.findById(req.params.id, (err, doc) => {
         if (err) return next(err);
-        return res.status(201).json({ 'status': 'success', 'data': req.record });
-    })
+        if (!doc) {
+            err = new Error('Not found');
+            err.status = 404;
+            return next(err)
+        }
+        let record = doc;
+        record.remove((err) => {
+            if (err) return next(err);
+            return res.status(201).json({ 'status': 'success', 'data': record });
+        })
+    });
 }
 
 const updateRecord = (req, res) => {

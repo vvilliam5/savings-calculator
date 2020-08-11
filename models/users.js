@@ -34,17 +34,24 @@ const getUserById = ({ user }, res) => {
 
 const createUser = async (req, res, next) => {
     let user = new Users(req.body);
-    // user.fullName = user.fullName.toLowerCase();
-    await bcrypt.hash(user.password, 10, function (err, hash) {
-        if (err) {
-            return next(err)
+    Users.findOne({ email: user.email }, async (err, userExist) => {
+        if (userExist) {
+            return res.status(500).json({ 'status': 'error', 'message': 'Email already in user, try another' })
+        } else {
+            await bcrypt.hash(user.password, 10, function (err, hash) {
+                if (err) {
+                    return next(err)
+                }
+                user.password = hash
+                user.save((err, user) => {
+                    if (err) return next(err)
+                    res.status(201).json({ 'status': 'success', 'data': user });
+                })
+            });
         }
-        user.password = hash
-        user.save((err, user) => {
-            if (err) return next(err)
-            res.status(201).json({ 'status': 'success', 'data': user });
-        })
-    });
+    })
+    // user.fullName = user.fullName.toLowerCase();
+
 }
 
 const signUp = (req, res, next) => {
@@ -75,11 +82,11 @@ const logIn = (req, res, next) => {
                     return res.status(200).json({ 'status': 'success', 'data': token });
                     // }
                 } else {
-                    return res.status(401).json({ 'status': 'error', 'message': 'Phone Number / Password is incorrect' });
+                    return res.status(401).json({ 'status': 'error', 'message': 'Email / Password is incorrect' });
                 }
             });
         } else {
-            return res.status(401).json({ 'status': 'error', 'message': 'Phone Number / Password is incorrect' });
+            return res.status(401).json({ 'status': 'error', 'message': 'Email / Password is incorrect' });
         }
     })
 }

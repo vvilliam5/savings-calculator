@@ -34,7 +34,7 @@ const getUserById = ({ user }, res) => {
 
 const createUser = async (req, res, next) => {
     let user = new Users(req.body);
-    Users.findOne({ email: user.email }, async (err, userExist) => {
+    Users.findOne({ email: user.email.toLowerCase() }, async (err, userExist) => {
         if (userExist) {
             return res.status(500).json({ 'status': 'error', 'message': 'Email already in user, try another' })
         } else {
@@ -43,6 +43,7 @@ const createUser = async (req, res, next) => {
                     return next(err)
                 }
                 user.password = hash
+                user.email = user.email.toLowerCase()
                 user.save((err, user) => {
                     if (err) return next(err)
                     res.status(201).json({ 'status': 'success', 'data': user });
@@ -63,7 +64,7 @@ const signUp = (req, res, next) => {
 }
 
 const logIn = (req, res, next) => {
-    let email = req.body.email;
+    let email = req.body.email.toLowerCase();
     let password = req.body.password;
     Users.find({ email }, null, (err, user) => {
         if (err) return next(err)
